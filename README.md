@@ -89,4 +89,8 @@ Public repo: https://github.com/2vic1/freshroute
 Enrolled in **Agents Open for Business** on Loops House with `esorvand@gmail.com`.  
 Attribution tag: `celo_85a3a5c339e5` — must be in every transaction.
 
-Scaffold and integration modules are pushed. Ready for keys, agent registration, and mainnet execution.
+Event wallet bound on Loops: `0x7B9C27d5e826c5a2aAe95431396ceE6Bbc143C1D` (balance ~5.63 CELO).  
+ERC-8004 identity: `agentId 10011`, already registered by that wallet; the Loops on-chain check shows **registered**.  
+First tagged transaction: `0x4e6c9700e7b206a0e7d4e5d0fce7708ecf21026feffff835618c709dca106c8a` — Loops now shows **ALL SET**.
+
+Remaining blockers: Self Agent ID, Textile API key, x402 PayTo registration, and the real USDT → cNGN payout to the freelancer.

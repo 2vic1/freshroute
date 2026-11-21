@@ -17,13 +17,26 @@
   },
   "enrolled": true,
   "playground": "https://www.loops.house/agents-open-for-business/playground/ideate",
+  "agentWallet": "0x7B9C27d5e826c5a2aAe95431396ceE6Bbc143C1D",
   "requirements": {
-    "erc8004": "pending",
+    "erc8004": {
+      "status": "verified",
+      "agentId": "10011",
+      "registry": "eip155:42220:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
+      "note": "Existing identity registered by the same agent wallet; Loops on-chain check passed."
+    },
     "selfAgentId": "pending",
     "textileConversionTagged": "pending",
     "recipientOutsideTeam": "pending",
     "x402PayToRegistered": "pending",
-    "attributionTag": "celo_85a3a5c339e5"
+    "attributionTag": "celo_85a3a5c339e5",
+    "firstTaggedTransaction": {
+      "hash": "0x4e6c9700e7b206a0e7d4e5d0fce7708ecf21026feffff835618c709dca106c8a",
+      "chainId": 42220,
+      "blockNumber": 83376952,
+      "status": "verified",
+      "note": "Loops dashboard: Tag seen on-chain / ERC-8004 identity registered / ALL SET."
+    }
   },
   "deadline": "2026-12-07T09:00:00Z",
   "winners": "2026-12-11"

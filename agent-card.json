@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "description": "A self-verifying remittance agent that converts USDT into local stablecoins on Celo, guarantees quote freshness, and refunds automatically when a paid quote is stale or empty.",
   "network": "eip155:42220",
-  "agentId": null,
+  "agentId": "10011",
+  "wallet": "0x7B9C27d5e826c5a2aAe95431396ceE6Bbc143C1D",
   "identity": {
-    "erc8004": null,
+    "erc8004": "eip155:42220:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432:10011",
     "selfAgentId": null
   },
   "capabilities": [
@@ -28,7 +29,7 @@
     "format": "sha256(json(quote + freshnessRule + verdict))",
     "mode": "predge-escrow"
   },
-  "attributionTag": null,
+  "attributionTag": "celo_85a3a5c339e5",
   "links": {
     "repo": "https://github.com/2vic1/freshroute",
     "docs": "https://fx-docs.textilecredit.com/",

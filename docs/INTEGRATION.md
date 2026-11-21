@@ -4,9 +4,10 @@
 Create a public repo and push this folder. The hackathon requires a public GitHub repo that still resolves at judging.
 
 ## 2. ERC-8004
-- Connect the operator wallet on Celo mainnet.
-- Register the agent with the payload from `src/agent-registration.mjs`.
-- Put the resulting agent id in `AGENT_ID` and in `agent-card.json`.
+- Use the event wallet `0x7B9C27d5e826c5a2aAe95431396ceE6Bbc143C1D`.
+- Existing `agentId 10011` was registered by this same wallet on Celo mainnet.
+- The Loops on-chain check already reports **ERC-8004 identity registered**.
+- If a FreshRoute-specific identity is later required, register from the same wallet and update `AGENT_ID` + `agent-card.json`.
 
 ## 3. Self Agent ID
 - Create/verify the agent identity at docs.self.xyz.
@@ -32,7 +33,10 @@ Create a public repo and push this folder. The hackathon requires a public GitHu
 - Set `TAKER_ADDRESS` to that wallet.
 
 ## 7. Onchain proof
-- Execute at least one tagged Textile conversion USDT → cNGN on Celo mainnet.
+- Event requirement satisfied for the first tag check:
+  `0x4e6c9700e7b206a0e7d4e5d0fce7708ecf21026feffff835618c709dca106c8a`
+  was sent from the event wallet with ERC-8021 suffix for `celo_85a3a5c339e5`.
+- Still required for the project score: execute a tagged Textile conversion USDT → cNGN on Celo mainnet.
 - Pay a recipient outside the team.
 - Report the tx hash with `/submit`.
 - Save the receipt JSON for judging.
