@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FreshRoute — quote with a guarantee</title>
+  <style>
+    body { font-family: ui-sans-serif, system-ui, sans-serif; background:#0e1512; color:#eafff2; margin:0; padding:40px; }
+    .card { max-width:720px; margin:auto; background:#15231d; border:1px solid #2c473b; border-radius:16px; padding:24px; }
+    h1 { margin:0 0 4px; font-size:28px; }
+    .sub { color:#9dbfae; margin-bottom:24px; }
+    input, button { font:inherit; padding:10px 12px; border-radius:10px; border:1px solid #3a5a4b; background:#0e1512; color:#eafff2; }
+    button { background:#2fd68a; color:#072014; border:0; font-weight:700; cursor:pointer; }
+    pre { white-space:pre-wrap; word-break:break-word; background:#0b120f; padding:16px; border-radius:10px; margin-top:20px; }
+    .ok { color:#57e39b; } .bad { color:#ff8a8a; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>FreshRoute 🐸</h1>
+    <div class="sub">Quote once. Verify freshness. Settle safely. Refund automatically.</div>
+    <label>USDT amount (base units) <input id="amount" value="50000000" /></label>
+    <button id="go">Request guaranteed quote</button>
+    <pre id="out">Ready.</pre>
+  </div>
+  <script>
+    document.getElementById('go').onclick = async () => {
+      const out = document.getElementById('out');
+      out.textContent = 'Requesting firm quote…';
+      const amount = document.getElementById('amount').value;
+      const r = await fetch('/quote', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ amount }) });
+      const d = await r.json();
+      out.innerHTML = `<span class="${d.freshness.valid ? 'ok' : 'bad'}">${d.freshness.valid ? 'FRESH — safe to pay' : 'REFUND DUE — ' + d.freshness.reason}</span>\n\n` + JSON.stringify(d, null, 2);
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+{
+  "name": "FreshRoute",
+  "version": "0.1.0",
+  "description": "A self-verifying remittance agent that converts USDT into local stablecoins on Celo, guarantees quote freshness, and refunds automatically when a paid quote is stale or empty.",
+  "network": "eip155:42220",
+  "agentId": null,
+  "identity": {
+    "erc8004": null,
+    "selfAgentId": null
+  },
+  "capabilities": [
+    "textile-fx-rfq-v2",
+    "quote-freshness-verdict",
+    "x402-payment",
+    "self-agent-id-verification",
+    "altana-session-key-wallet"
+  ],
+  "services": [
+    {
+      "type": "x402",
+      "endpoint": "https://example.freshroute.app/quote",
+      "price": "0.002",
+      "asset": "USDT",
+      "payTo": null
+    }
+  ],
+  "receipt": {
+    "format": "sha256(json(quote + freshnessRule + verdict))",
+    "mode": "predge-escrow"
+  },
+  "attributionTag": null,
+  "links": {
+    "repo": "https://github.com/REPLACE/freshroute",
+    "docs": "https://fx-docs.textilecredit.com/",
+    "x402": "https://x402.celo.org/"
+  }
+}
