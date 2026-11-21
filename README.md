@@ -84,4 +84,6 @@ Demo mode works without keys and returns a synthetic quote so the UI and rule lo
 
 ## Status
 
-Local scaffold created: ready for keys, agent registration, and mainnet execution.
+Public repo: https://github.com/2vic1/freshroute
+
+Scaffold and integration modules are pushed. Ready for keys, agent registration, and mainnet execution.
