@@ -86,4 +86,7 @@ Demo mode works without keys and returns a synthetic quote so the UI and rule lo
 
 Public repo: https://github.com/2vic1/freshroute
 
+Enrolled in **Agents Open for Business** on Loops House with `esorvand@gmail.com`.  
+Attribution tag: `celo_85a3a5c339e5` — must be in every transaction.
+
 Scaffold and integration modules are pushed. Ready for keys, agent registration, and mainnet execution.
