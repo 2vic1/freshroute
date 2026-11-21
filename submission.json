@@ -1,0 +1,28 @@
+{
+  "hackathon": "Agents Open for Business",
+  "organizer": "Celo DevRel x Loops House",
+  "project": "FreshRoute",
+  "tagline": "Quote once. Verify freshness. Settle safely. Refund automatically.",
+  "repo": "https://github.com/2vic1/freshroute",
+  "network": "eip155:42220",
+  "tracks": [
+    "Stablecoin Corridors (Textile FX)",
+    "Agent Vault: Online & Onchain Checkouts",
+    "Self Agent ID: Verified Agent Payments",
+    "Altana Agent Wallets"
+  ],
+  "namedUser": {
+    "name": "Ehsan Sorvand",
+    "job": "Pay a Nigerian freelancer in cNGN for a delivered design job"
+  },
+  "requirements": {
+    "erc8004": "pending",
+    "selfAgentId": "pending",
+    "textileConversionTagged": "pending",
+    "recipientOutsideTeam": "pending",
+    "x402PayToRegistered": "pending",
+    "attributionTag": "pending"
+  },
+  "deadline": "2026-12-07T09:00:00Z",
+  "winners": "2026-12-11"
+}

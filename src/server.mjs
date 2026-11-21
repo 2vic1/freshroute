@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import { requestQuote, submitTx, getStatus } from './textile.mjs';
 import { evaluateFreshness, RULE } from './freshness.mjs';
 import { assertTagged, tag } from './attribution.mjs';
+import { verifySelfAgentId } from './self-id.mjs';
 
 const PORT = process.env.PORT || 3000;
 const records = new Map();
@@ -39,6 +40,10 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && url.pathname === '/quote') {
+    const selfCheck = verifySelfAgentId(req.headers['x-self-agent-id']);
+    if (!selfCheck.ok && process.env.DEMO_MODE !== '1') {
+      return json(res, 403, { error: selfCheck.reason });
+    }
     const b = await body(req);
     const amount = String(b.amount || '50000000'); // 50 USDT, 6 decimals
     const taker = b.taker || process.env.TAKER_ADDRESS || '0x0000000000000000000000000000000000000000';
