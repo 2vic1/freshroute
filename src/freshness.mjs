@@ -3,8 +3,9 @@
  */
 export const RULE = {
   version: '1.0.0',
-  description: 'Quote must be firm, non-empty, and settled before expiresAt.',
-  refundOn: ['no_quote', 'empty_buy_amount', 'expired', 'missing_signature', 'missing_order'],
+  description: 'Quote must be firm, non-empty, signed, and fresh at the moment it is served.',
+  maxQuoteAgeSeconds: 60,
+  refundOn: ['no_quote', 'empty_buy_amount', 'stale', 'expired', 'missing_signature', 'missing_order'],
   refundAmount: '0.002',
 };
 
@@ -16,6 +17,11 @@ export function evaluateFreshness(quoted, now = Date.now()) {
   if (!q.buyAmount || BigInt(q.buyAmount || '0') === 0n) return { valid: false, reason: 'empty_buy_amount', rule: RULE.version };
   if (!q.signature || q.signature === '0x') return { valid: false, reason: 'missing_signature', rule: RULE.version };
   if (!q.encodedOrder || q.encodedOrder === '0x') return { valid: false, reason: 'missing_order', rule: RULE.version };
+
+  const issuedAt = Date.parse(q.issuedAt || q.createdAt || '');
+  if (Number.isFinite(issuedAt) && (now - issuedAt) / 1000 > RULE.maxQuoteAgeSeconds) {
+    return { valid: false, reason: 'stale', rule: RULE.version };
+  }
 
   const deadline = Date.parse(q.expiresAt || '');
   if (!Number.isFinite(deadline)) return { valid: false, reason: 'expired', rule: RULE.version };

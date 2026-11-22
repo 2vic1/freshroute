@@ -1,5 +1,6 @@
 import http from 'node:http';
 import fs from 'node:fs';
+import path from 'node:path';
 import crypto from 'node:crypto';
 import { requestQuote, submitTx, getStatus } from './textile.mjs';
 import { evaluateFreshness, RULE } from './freshness.mjs';
@@ -7,7 +8,27 @@ import { assertTagged, tag } from './attribution.mjs';
 import { verifySelfAgentId } from './self-id.mjs';
 
 const PORT = process.env.PORT || 3000;
+const DATA_FILE = process.env.DATA_FILE || path.resolve('data/records.json');
 const records = new Map();
+
+function loadRecords() {
+  try {
+    const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+    for (const rec of raw) records.set(rec.id, rec);
+  } catch {
+    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+    fs.writeFileSync(DATA_FILE, '[]');
+  }
+}
+
+function saveRecords() {
+  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+  const tmp = DATA_FILE + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify([...records.values()], null, 2));
+  fs.renameSync(tmp, DATA_FILE);
+}
+
+loadRecords();
 
 const USDT = '0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e';
 const CNGN = '0xF6829D7393dAe24509eb1E52eE8e572e2E271a4f';
@@ -30,11 +51,70 @@ function hash(obj) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
-  if (req.method === 'GET' && url.pathname === '/health') {
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/health') {
     return json(res, 200, { ok: true, service: 'freshroute', attributionTag: tag() || null });
   }
 
-  if (req.method === 'GET' && url.pathname === '/') {
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/rule.json') {
+    return json(res, 200, {
+      version: RULE.version,
+      description: RULE.description,
+      maxQuoteAgeSeconds: RULE.maxQuoteAgeSeconds,
+      refundOn: RULE.refundOn,
+      refundAmount: RULE.refundAmount,
+      checks: {
+        empty: ['data.status === "no_quote"', 'quote.buyAmount missing or 0'],
+        stale: ['quote.issuedAt older than maxQuoteAgeSeconds'],
+        expired: ['now >= Date.parse(quote.expiresAt)'],
+        unsigned: ['quote.signature missing or "0x"'],
+        no_order: ['quote.encodedOrder missing or "0x"'],
+      },
+      quoteSchema: '/schema.json',
+    });
+  }
+
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/schema.json') {
+    return json(res, 200, {
+      type: 'object',
+      required: ['id', 'freshness', 'receiptHash', 'quote', 'verdict'],
+      properties: {
+        id: { type: 'string', example: 'rfq_123' },
+        freshness: {
+          type: 'object',
+          required: ['valid', 'rule'],
+          properties: {
+            valid: { type: 'boolean' },
+            reason: { type: 'string', nullable: true },
+            rule: { type: 'string', example: '1.0.0' },
+            deadline: { type: 'string', format: 'date-time' },
+            msRemaining: { type: 'integer' },
+          },
+        },
+        receiptHash: { type: 'string', pattern: '^0x[0-9a-f]{64}$' },
+        verdict: { type: 'string', enum: ['pending_settlement', 'refund_due'] },
+        demo: { type: 'boolean' },
+        quote: {
+          type: 'object',
+          required: ['sellToken', 'buyToken', 'sellAmount', 'buyAmount', 'issuedAt', 'expiresAt', 'signature', 'encodedOrder'],
+          properties: {
+            sellToken: { type: 'string' },
+            buyToken: { type: 'string' },
+            sellAmount: { type: 'string', description: 'integer in token base units' },
+            buyAmount: { type: 'string', description: 'integer in token base units' },
+            issuedAt: { type: 'string', format: 'date-time' },
+            expiresAt: { type: 'string', format: 'date-time' },
+            orderDeadline: { type: 'string', format: 'date-time' },
+            latestOrderDeadline: { type: 'string', format: 'date-time' },
+            reactor: { type: 'string' },
+            signature: { type: 'string' },
+            encodedOrder: { type: 'string' },
+          },
+        },
+      },
+    });
+  }
+
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     return res.end(fs.readFileSync(new URL('../demo/index.html', import.meta.url)));
   }
@@ -52,7 +132,8 @@ const server = http.createServer(async (req, res) => {
     const id = quoted?.data?.rfqId || hash(quoted);
     const receiptHash = hash({ quoted, freshness, rule: RULE });
     records.set(id, { id, quoted, freshness, rule: RULE, receiptHash, txHash: null, verdict: freshness.valid ? 'pending_settlement' : 'refund_due' });
-    return json(res, 200, { id, freshness, receiptHash, quote: quoted?.data?.quote || null, demo: !!quoted.demo, verdict: records.get(id).verdict });
+    saveRecords();
+    return json(res, 200, { id, freshness, receiptHash, rule: RULE.version, quote: quoted?.data?.quote || null, demo: !!quoted.demo, verdict: records.get(id).verdict });
   }
 
   if (req.method === 'POST' && url.pathname === '/submit') {
@@ -62,10 +143,11 @@ const server = http.createServer(async (req, res) => {
     const submitted = await submitTx(rec.quoted?.data?.rfqId, rec.quoted?.data?.claimToken, b.txHash);
     rec.txHash = b.txHash;
     rec.submitted = submitted;
+    saveRecords();
     return json(res, 200, { ok: true, submitted });
   }
 
-  if (req.method === 'GET' && url.pathname === '/receipt') {
+  if ((req.method === 'GET' || req.method === 'HEAD') && url.pathname === '/receipt') {
     const rec = records.get(url.searchParams.get('id'));
     if (!rec) return json(res, 404, { error: 'unknown_quote' });
     const status = await getStatus(rec.quoted?.data?.rfqId, rec.quoted?.data?.claimToken);

@@ -23,6 +23,7 @@ export async function requestQuote({ sellToken, buyToken, sellAmount, taker }) {
           sellToken,
           buyToken,
           sellAmount,
+          issuedAt: new Date(now).toISOString(),
           buyAmount: String(BigInt(sellAmount) * 15800n / 1000000n),
           feeAmount: '10000',
           takerPays: sellAmount,

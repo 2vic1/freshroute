@@ -82,6 +82,18 @@ Demo mode works without keys and returns a synthetic quote so the UI and rule lo
 - **Dec 4:** AskBots review round 2.
 - **Dec 7:** submit before 09:00 GMT.
 
+## Live pilot endpoint
+
+Demo deployment: `https://31.15.18.3`
+
+- `POST /quote` — issues a guaranteed quote (demo mode until Textile key is supplied)
+- `GET /rule.json` — published freshness rule, version `1.0.0`
+- `GET /schema.json` — quote response schema
+- `GET /receipt?id=...` — stored receipt
+- `GET /health` — service health
+
+Quote responses are persisted to disk and survive service restarts.
+
 ## Status
 
 Public repo: https://github.com/2vic1/freshroute
