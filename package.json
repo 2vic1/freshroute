@@ -5,6 +5,7 @@
   "type": "module",
   "description": "A self-verifying remittance agent for Celo stablecoin corridors",
   "scripts": {
+    "build": "node --check src/server.mjs && node --check src/textile.mjs && node --check src/freshness.mjs && node --check src/attribution.mjs && node --check src/self-id.mjs",
     "dev": "node src/server.mjs",
     "start": "node src/server.mjs",
     "test": "node --test"
