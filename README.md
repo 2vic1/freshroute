@@ -84,7 +84,7 @@ Demo mode works without keys and returns a synthetic quote so the UI and rule lo
 
 ## Live pilot endpoint
 
-Demo deployment: `https://31.15.18.3`
+Live demo: `https://13.140.192.70.nip.io`
 
 - `POST /quote` — issues a guaranteed quote (demo mode until Textile key is supplied)
 - `GET /rule.json` — published freshness rule, version `1.0.0`
